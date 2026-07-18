@@ -37,10 +37,11 @@ func _physics_process(delta: float) -> void:
 	# Area2D nodes do not collide, but they can detect and influence (via signals).
 	# Source: https://www.reddit.com/r/godot/comments/1lmk6x9/characterbody2d_cant_detect_when_colliding_with/
 	
-	for i: int  in get_slide_collision_count():
-		print("Inside get_slide_collision_count")
-		var collision: KinematicCollision2D = get_slide_collision(i)
-		print("I collided with ", collision.get_collider().name)
+	# This detects the static physics bodies like the walls (StaticBody2D)
+	# But it doesn't work for ball (Area2D)
+	#for i: int  in get_slide_collision_count():
+		#var collision: KinematicCollision2D = get_slide_collision(i)
+		#print("I collided with ", collision.get_collider().name)
 	
 	
 	position = position.clamp(screen_start_boundary, screen_end_boundary)
