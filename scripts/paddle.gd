@@ -26,11 +26,21 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	# Detect if we have collided with the ball and if so, the ball should 
 	# Receive an impulse/force, which we need to add programatically since we are using
-	# CharacterBody2D for the ball. I used CharacterBody2D over a RigidBody2D which uses
+	# Area2D for the ball. I used Area2D over a RigidBody2D which uses
 	# Godot's built-in physics engine because I wanted better control over the movement
 	# Of the ball, it was not getting the exact speed and angle I wanted.
+	# You could use CharacterBody2D for the ball/projectile, but it seems to have performance
+	# issues and is overkill according to: https://www.reddit.com/r/godot/comments/1tlo583/pros_and_cons_of_making_projectiles_area2d_or/
+	
+	# However, since we are using Area2D, the CharacterBody2D node for the paddle won't detect
+	# the ball because Area2D nodes do not have a physical mass/blocking body.
+	# Area2D nodes do not collide, but they can detect and influence (via signals).
+	# Source: https://www.reddit.com/r/godot/comments/1lmk6x9/characterbody2d_cant_detect_when_colliding_with/
+	
 	for i: int  in get_slide_collision_count():
+		print("Inside get_slide_collision_count")
 		var collision: KinematicCollision2D = get_slide_collision(i)
+		print("I collided with ", collision.get_collider().name)
 	
 	
 	position = position.clamp(screen_start_boundary, screen_end_boundary)
