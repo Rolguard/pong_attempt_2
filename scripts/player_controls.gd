@@ -5,4 +5,3 @@ class_name PlayerControls extends Resource
 @export var move_left: String = "player1_move_left"
 @export var move_down: String = "player1_move_down"
 @export var move_right: String = "player1_move_right"
-

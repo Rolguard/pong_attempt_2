@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://d0fbel2mr40k8"]
+[gd_scene format=3 uid="uid://d0fbel2mr40k8"]
 
 [ext_resource type="Texture2D" uid="uid://btl51m5oqnidy" path="res://assets/dark-blue-bg.png" id="1_se0gr"]
 [ext_resource type="PackedScene" uid="uid://cvdts4sftcuo6" path="res://scenes/paddle.tscn" id="2_35ouh"]
@@ -7,27 +7,27 @@
 [ext_resource type="PackedScene" uid="uid://dgcjbapda1pqc" path="res://scenes/wall.tscn" id="4_q7t6a"]
 [ext_resource type="Resource" uid="uid://6ofdrwm72kg2" path="res://resources/player2_controls.tres" id="4_x0r15"]
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node" unique_id=884014353]
 
-[node name="Background" type="Sprite2D" parent="."]
+[node name="Background" type="Sprite2D" parent="." unique_id=1152678963]
 position = Vector2(160, 90)
 texture = ExtResource("1_se0gr")
 
-[node name="Paddle1" parent="." instance=ExtResource("2_35ouh")]
+[node name="Paddle1" parent="." unique_id=1692954058 instance=ExtResource("2_35ouh")]
 position = Vector2(48, 80)
 controls = ExtResource("3_l3ius")
 
-[node name="Paddle2" parent="." instance=ExtResource("2_35ouh")]
+[node name="Paddle2" parent="." unique_id=1361937759 instance=ExtResource("2_35ouh")]
 position = Vector2(266, 80)
 rotation = 3.14159
 controls = ExtResource("4_x0r15")
 
-[node name="Ball" parent="." instance=ExtResource("3_aw56a")]
+[node name="Ball" parent="." unique_id=149561589 instance=ExtResource("3_aw56a")]
 position = Vector2(121, 81)
 
-[node name="Wall" parent="." instance=ExtResource("4_q7t6a")]
+[node name="Wall" parent="." unique_id=700155884 instance=ExtResource("4_q7t6a")]
 position = Vector2(160, 8)
 
-[node name="Wall2" parent="." instance=ExtResource("4_q7t6a")]
+[node name="Wall2" parent="." unique_id=1232484385 instance=ExtResource("4_q7t6a")]
 position = Vector2(160, 172)
 rotation = 3.14159
