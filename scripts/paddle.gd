@@ -12,6 +12,12 @@ func _ready() -> void:
 	# This makes it so our sprite/collisionshape does not go out of bounds of the screen
 	screen_start_boundary = Vector2.ZERO + paddle_size
 	screen_end_boundary = get_viewport_rect().size - paddle_size
+	
+	# Set default starting position for each player's paddles based on the viewport size
+	if controls.is_player_one():
+		position.x = get_viewport_rect().size.x / 4 - paddle_size.x
+	elif controls.is_player_two():
+		position.x = (get_viewport_rect().size.x / 4) * 3 + paddle_size.x
 
 func _physics_process(delta: float) -> void:
 	# Input.get_vector() already normalises length of vector to 1 to prevent faster diagonal movement

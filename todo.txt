@@ -1,0 +1,38 @@
+# TODO: Todo List of features
+
+# - Score from 0 - 9, draw the pixel art for the numbers?
+
+# Next thing
+# TODO:
+	Respawn ball - Then after 3 seconds we want to spawn another ball
+	--> next to spawn with animation
+# From this source: https://www.youtube.com/watch?v=MNGWbVNSKmo
+# I think what we can do is when the ball goes off the screen, we call ball.queue_free()
+# Then after 3 seconds, we respawn the ball in the centre with that random starting velocity
+# But we fade it in using a tween, instead of appearing jarringly... hmmm
+
+
+# I think for centering across many resolutions and resizing, we need to use
+# Anchors / containers 
+# But the thing is I thought containers/anchors are related to Control nodes, which are related to UI?
+# I just want to center a Node2d within the parent Node2d..
+# Sources: https://docs.godotengine.org/en/stable/tutorials/ui/size_and_anchors.html
+# 
+
+
+# Ideally I find a way in the inspector to set the starting position of an element based on the parent node
+# The reason I want to do it in the inspector rather than dynamically in the code, is such that I can see it 
+# nicely in the 2d view UI, rather than it just teleporting to the correct position on play.
+# I think the only solution I can think of is to manually move the position, maybe get the viewport rect and divide by an amount.
+# This is an issue imo because if we change the view resolution, doesn't the whole game break?
+# Yeah I tested by changing the project settings, the position of all nodes doesn't change when the viewport changes.
+
+# - The ball should accelerate a bit if the user holds the direction key the ball is already travelling,
+# 	currently does nothing if the user 'pushes' the ball (we probably add a flat velocity on the collision bounce with the player paddle)
+# - Try and prevent the user from resizing the window?
+# - White particle smashing effect on hit
+# - A pong sound on hit + sound effect + particle effect when it passes the other player's side.
+# - The score change should pop out
+
+# - BUG: If the user spams direction input while the ball is bouncing towards them, it will spazz out?
+# - When the ball goes out of bounds, it should respawn after 5 seconds (later we add a point)

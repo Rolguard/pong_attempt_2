@@ -2,22 +2,33 @@ extends CharacterBody2D
 class_name Ball
 
 
-const SPEED: int = 50
-var direction: Vector2 = Vector2(1, 0)
-@export var initial_velocity: Vector2 = direction * SPEED
+@export var speed: int = 100
 
 # _process - Idle processing, for running code that updates every frame, as soon as possible
 
-# TODO: Look at bouncing bullet of walls example, should help me with pong ball bouncing on collision with paddle
-# https://docs.godotengine.org/en/stable/tutorials/physics/using_character_body_2d.html
 
-# Niceeeeee I got the bouncing working, although it kinda glitches out when you spam the direction key on the ball.
-# - Need to make it work with colliding at an angle
-# - Randomise the starting direction of the ball so it can come at many different angles, not just horizontal.
-# - Test ball bouncing on wall
-# - When the ball goes out of bounds, it should respawn after 5 seconds (later we add a point)
+# TODO:
+# From this source: https://www.youtube.com/watch?v=MNGWbVNSKmo
+# I think what we can do is when the ball goes off the screen, we call ball.queue_free()
+# Then after 3 seconds, we respawn the ball in the centre with that random starting velocity
+# But we fade it in using a tween, instead of appearing jarringly... hmmm
 
 func _ready() -> void:
+	# Randomise the intial velocity starting direction, using our custom random_float function
+	# to ensure we don't get any vector directions near 0, which causes the ball to not move towards any player
+	# instead staying close to the middle.
+	var minimum_direction: float = 0.3
+	var maximum_direction: float = 1
+
+	var direction: Vector2 = Vector2(Utilities.random_float(minimum_direction, maximum_direction), Utilities.random_float(minimum_direction, maximum_direction))
+	
+	# We want to normalise the randomised direction vector into a unit vector so it simply represents
+	# direction without adding magnitude.
+	# The past problem I had before was the ball would be travelling at different speeds,
+	# depending on the values in the direction vector, which influenced magnitude.
+	direction = direction.normalized()
+	var initial_velocity: Vector2 = direction * speed
+
 	velocity = initial_velocity
 
 func _physics_process(delta: float) -> void:
@@ -44,3 +55,8 @@ func _physics_process(delta: float) -> void:
 		print("Velocity before collision: {velocity}".format({"velocity": velocity}))
 		velocity = velocity.bounce(collision.get_normal())
 		print("Velocity after collision: {velocity}".format({"velocity": velocity}))
+
+# Credit for detecting when node exits screen/viewport https://github.com/kidscancode/godot_recipes/blob/master/src-3/content/2D/enter_exit_screen.md
+func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
+	queue_free()
+	# TODO: Then after 3 seconds we want to spawn another ball
