@@ -1,9 +1,12 @@
 # TODO: Todo List of features
 
-# - The ball should accelerate a bit if the user holds the direction key the ball is already travelling,
-# 	currently does nothing if the user 'pushes' the ball (we probably add a flat velocity on the collision bounce with the player paddle)
+# Do these first, priority:
 # - A pong sound on hit + sound effect + particle effect when it passes the other player's side.
 # Maybe background ambient music?
+
+# Backlog:
+# - The ball should accelerate a bit if the user holds the direction key the ball is already travelling,
+# 	currently does nothing if the user 'pushes' the ball (we probably add a flat velocity on the collision bounce with the player paddle)
 # Settings cog wheel which opens a UI to edit settings
 # Buttons to mute/unmute music/sound effects OR slider for music / sound effects (SFX)
 
@@ -21,3 +24,17 @@
 # I just want to center a Node2d within the parent Node2d..
 # Sources: https://docs.godotengine.org/en/stable/tutorials/ui/size_and_anchors.html
 # 
+
+
+# EXPERIMENT - Backlog, I tried experimenting but it felt like a snowy/slippery surface:
+# We know we increase the velocity by multiplying it by a positive number > 1.
+# So perhaps what we want to do is get the magnitude of the paddle's velocity.
+# Then we multiply that magnitude in combination with a reduction multiplier to ensure
+# it doesn't increase the speed too much but it should 
+
+# My plan is to add movement_acceleration to paddle so that its not a constant +1, -1 * movement speed
+# Now if we accelerate, then at max acceleration, the ball will bounce more, then if it was the initial part
+# of the movement
+# Source: https://forum.godotengine.org/t/how-to-make-speed-increase-with-movement-acceleration/99103/3
+# https://www.google.com/search?q=can+input+player+movement+accelerate+to+a+max+speed+godot&sca_esv=40ca210b90be4ad9&rlz=1C1FHFK_en-GBAU933AU933&sxsrf=AKL5yDgrMj9J2zZnGY07wDXEjf3IbucB7A%3A1794395603717&ei=0030aoqiK-O32roP6vz0mAs&biw=2560&bih=1279&uact=5&oq=can+input+player+movement+accelerate+to+a+max+speed+godot&gs_lp=Egxnd3Mtd2l6LXNlcnAiOWNhbiBpbnB1dCBwbGF5ZXIgbW92ZW1lbnQgYWNjZWxlcmF0ZSB0byBhIG1heCBzcGVlZCBnb2RvdDIFECEYoAEyBRAhGKABMgUQIRigATIFECEYoAEyBRAhGKABSPUGUIMDWKIGcAF4AJABAJgBkwKgAdoFqgEDMi0zuAEDyAEA-AEBmAIEoALpBcICCBAAGO8FGLADwgIFEAAY7wWYAwCIBgGQBgWSBwUxLjAuM6AH7Q-yBwMyLTO4B-UFwgcDMC40yAcIgAgB&sclient=gws-wiz-serp
+		

@@ -56,42 +56,67 @@ func _physics_process(delta: float) -> void:
 		print("Velocity before collision: {velocity}".format({"velocity": velocity}))
 		
 		
-		# I was running into a bug where when the player paddle was travelling opposite direction to the ball
-		# and the ball was higher velocity, sometimes for a few seconds, the ball would like jitter/stutter/glitch out
-		# on the contact point of the ball and the paddle.
-		# If I had to guess, it's something to do with the physics where the ball detects collision
-		# with the paddle, it bounces and flips the direction velocity. But then the paddle velocity gets
-		# registered in the physics engine and it now overlaps the bounced ball, so the ball bounces again.
-		# This causes the jitter effect where the ball and paddle keep colliding.
-		# I'm guessing we break out of this as the ball accelerates per bounce or the player paddle stops inputting the directional key.
+		# We check the dot product of the normal vector for the collision (the direction vector the collision surface is facing)
+		# The dot product of two vectors is a math operation that takes two vectors,
+		# multiplies their components and adds up their results.
+		# The algebraic formula is like: a . b = (a1 * b1) + (a2 * b2) 
 		
-		# The code below seems to fix the problem
-		# TODO: Investigate cause of the issue and why the code below probably addresses the issue, not sure though
-		# Source: https://forum.godotengine.org/t/ball-gets-stuck-instead-of-bouncing-using-bounce-and-move-and-collide/88102
+		# The reason we normalize the vectors is due to this 2nd geometric formula:
+		# Dot product of two vectors (a . b) = |a| * |b| * cos(theta)
+		
+		# If |a| and |b| are both = 1, which happens when we normalize vectors, then
+		# the dot product gives us cos(theta).
+		# We can imagine a ball travelling right with a right side paddle facing left. 
+		# The normal of the collision is the direction the right side paddle is facing, which is left.
+		# If the ball's direction vector also faces the same direction (left), then the degrees between the vectors is 0°.
+		# Cos(0) = 1.
+		# If the ball's direction vector is perpendicular to the normal of the collision, then
+		# the degrees between vectors is 90 degrees. Cos(90) = 0.
+		# If the ball's direction vector faces the opposite direction (right), then 
+		# the degrees between the vectors is 180 degrees. Cos(180) = -1
+		# The cosine is positive from 0° to 90°, zero at exactly 90°, and negative from 90° to 180°
+		
+		# So we can use the dot product to determine how much two vectors point in the same direction or align.
+		# If the normal vector of the collision and the ball velocity's dot product is <= 0, 
+		# then the ball is travelling opposite to the collision normal (where the paddle is facing).
+		# So that means, the ball is travelling into the paddle, and so we want to bounce.
+		# Now if there is another collision check but a bounce has already occurred,
+		# the ball is now travelling aligned with the previous collision normal, 
+		# which means the dot product will be positive and another bounce will not occur, thus preventing the bug.
+		
+
+		
+		# According to Godot documentation: 
+		# When using unit (normalized) vectors, the result will always be between -1.0 (180 degree angle) 
+		# when the vectors are facing opposite directions, and 1.0 (0 degree angle) when the vectors are aligned.
+		# Source: https://docs.godotengine.org/en/stable/classes/class_vector2.html#class-vector2-method-dot
+		
+		# This helps prevent a bug where often when the ball is at high velocities and travels to the paddle
+		# and the player spams the directional key towards the ball, it would bounce back and forth quickly
+		# on the collision point, jittering. I think this is because after the paddle moves into the ball's path
+		# we calculate the bounce but in the next physics frame, the paddle is still contacting/touching
+		# the ball, so it causes the ball to bounce again. We get out of this cycle because we increase
+		# the velocity of the ball upon every collision so eventually, the ball escapes the player's
+		# paddle collision area so we don't get continous bouncing.
+		
+		# Inspiration source code for similar problem:
+		# https://forum.godotengine.org/t/ball-gets-stuck-instead-of-bouncing-using-bounce-and-move-and-collide/88102
 		# https://forum.godotengine.org/t/a-physics-body-freezes-when-moved-by-another-one/133729
+
 		
-		#var normal: Vector2 = collision.get_normal()
-		#if normal.dot(velocity.normalized()) <= 0.0:
-			#velocity = velocity.bounce(normal)
+		var normal: Vector2 = collision.get_normal()
+		if normal.dot(velocity.normalized()) <= 0.0:
+			velocity = velocity.bounce(normal)
+			
+		# Using above, instead of just bouncing
 		#velocity = velocity.bounce(collision.get_normal())
 		
-		
-		# EXPERIMENT:
-		# We know we increase the velocity by multiplying it by a positive number > 1.
-		# So perhaps what we want to do is get the magnitude of the paddle's velocity.
-		# Then we multiply that magnitude in combination with a reduction multiplier to ensure
-		# it doesn't increase the speed too much but it should 
-		
-		# My plan is to add movement_acceleration to paddle so that its not a constant +1, -1 * movement speed
-		# Now if we accelerate, then at max acceleration, the ball will bounce more, then if it was the initial part
-		# of the movement
-		# Source: https://forum.godotengine.org/t/how-to-make-speed-increase-with-movement-acceleration/99103/3
-		# https://www.google.com/search?q=can+input+player+movement+accelerate+to+a+max+speed+godot&sca_esv=40ca210b90be4ad9&rlz=1C1FHFK_en-GBAU933AU933&sxsrf=AKL5yDgrMj9J2zZnGY07wDXEjf3IbucB7A%3A1794395603717&ei=0030aoqiK-O32roP6vz0mAs&biw=2560&bih=1279&uact=5&oq=can+input+player+movement+accelerate+to+a+max+speed+godot&gs_lp=Egxnd3Mtd2l6LXNlcnAiOWNhbiBpbnB1dCBwbGF5ZXIgbW92ZW1lbnQgYWNjZWxlcmF0ZSB0byBhIG1heCBzcGVlZCBnb2RvdDIFECEYoAEyBRAhGKABMgUQIRigATIFECEYoAEyBRAhGKABSPUGUIMDWKIGcAF4AJABAJgBkwKgAdoFqgEDMi0zuAEDyAEA-AEBmAIEoALpBcICCBAAGO8FGLADwgIFEAAY7wWYAwCIBgGQBgWSBwUxLjAuM6AH7Q-yBwMyLTO4B-UFwgcDMC40yAcIgAgB&sclient=gws-wiz-serp
-		
-		# If I can't make it work as I think in my head, this is actually a decent compromise
-		#if velocity.length() < MAXIMUM_MAGNITUDE:
-			#velocity *= bounce_speed_multiplier
-		#velocity = velocity.limit_length(MAXIMUM_MAGNITUDE)
+		# TODO: Could be useful code for acceleration. But I'll experiment and research it later in the backlog
+		#var collider := collision.get_collider()
+		#if collider is Paddle:
+			#var push: float = collider.velocity.dot(normal)  # >0 means paddle moving toward the ball
+			#if push > 0.0:
+				#velocity += normal * push * 0.5
 		
 		
 		# TODO: Multiplty the velocity of the ball based on the magnitude
