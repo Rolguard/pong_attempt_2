@@ -7,7 +7,9 @@
 size = Vector2(4, 16)
 
 [node name="Paddle" type="CharacterBody2D" unique_id=571901285]
+z_index = 1
 collision_mask = 6
+motion_mode = 1
 script = ExtResource("1_4w1y8")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1594304496]
